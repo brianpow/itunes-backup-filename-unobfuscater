@@ -51,7 +51,15 @@ def process_db(filename):
                 print "Renaming %s to %s" % (src, dst)
             try:
                 if not args.dryrun:
-                    os.renames(src, dst)
+                    try:
+                        os.stat(src)
+                        try:
+                            os.remove(dst)
+                        except OSError:
+                            pass
+                        os.renames(src, dst)
+                    except OSError:
+                        print "Error occured when finding source file: %s to %s" % (src, dst)
             except OSError:
                 print "Error occured when renaming %s to %s" % (src, dst)
 
@@ -70,7 +78,7 @@ parser.add_argument(
     '-V',
     '--version',
     action='version',
-    version='%(prog)s 1.1')
+    version='%(prog)s 1.2')
 
 args = parser.parse_args()
 
