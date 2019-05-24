@@ -48,13 +48,18 @@ def process_db(filename):
                 src = os.sep.join([path, row[0][:2], row[0]])
                 dst = os.sep.join([path, row[1], row[2]])
             if args.verbose:
-                print "Renaming %s to %s" % (src, dst)
+                if args.tab:
+                    print "%s\t%s" % (src, dst)
+                else:
+                    print "Renaming %s to %s" % (src, dst)
+            
             try:
                 if not args.dryrun:
                     try:
                         os.stat(src)
                         try:
-                            os.remove(dst)
+                            if (os.stat(dst)):
+                                os.remove(dst)
                         except OSError:
                             pass
                         os.renames(src, dst)
@@ -74,6 +79,8 @@ parser.add_argument('-u', '--undo', dest='undo',
                     action='store_true', help='Undo rename')
 parser.add_argument('-v', '--verbose', dest='verbose',
                     action='count', help='Be more verbose')
+parser.add_argument('-t', '--tab', dest='tab',
+                    action='store_true', help='print old and new name in tab separated format')
 parser.add_argument(
     '-V',
     '--version',
