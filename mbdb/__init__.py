@@ -12,13 +12,13 @@ class Mbdb:
     def __init__(self, filename):
         self.filename = filename
         self.mbdb, self.mbdx = self.parse()
-        for offset, fileinfo in self.mbdb.items():
+        for offset, fileinfo in list(self.mbdb.items()):
             if offset in self.mbdx:
                 fileinfo['fileID'] = self.mbdx[offset]
             else:
                 fileinfo['fileID'] = "<nofileID>"
-                print >> sys.stderr, "No fileID found for %s" % fileinfo_str(
-                    fileinfo)
+                print("No fileID found for %s" % fileinfo_str(
+                    fileinfo), file=sys.stderr)
 
     def getint(self, data, offset, intsize):
         """Retrieve an integer (big-endian) and new offset from the current offset"""
@@ -75,7 +75,7 @@ class Mbdb:
                 id = hashlib.sha1(fullpath)
                 mbdx[fileinfo['start_offset']] = id.hexdigest()
             except IndexError:
-                print "Error when parsing %s" % (fileinfo['filename'])
+                print("Error when parsing %s" % (fileinfo['filename']))
                 pass
         return mbdb, mbdx
 
@@ -108,15 +108,15 @@ def fileinfo_str(f, verbose=False):
     elif (f['mode'] & 0xE000) == 0x4000:
         type = 'd'  # dir
     else:
-        print >> sys.stderr, "Unknown file type %04x for %s" % (
-            f['mode'], fileinfo_str(f, False))
+        print("Unknown file type %04x for %s" % (
+            f['mode'], fileinfo_str(f, False)), file=sys.stderr)
         type = '?'  # unknown
     info = ("%s%s %08x %08x %7d %10d %10d %10d (%s)%s::%s" %
             (type, modestr(f['mode'] & 0x0FFF), f['userid'], f['groupid'], f['filelen'],
              f['mtime'], f['atime'], f['ctime'], f['fileID'], f['domain'], f['filename']))
     if type == 'l':
         info = info + ' -> ' + f['linktarget']  # symlink destination
-    for name, value in f['properties'].items():  # extra properties
+    for name, value in list(f['properties'].items()):  # extra properties
         info = info + ' ' + name + '=' + repr(value)
     return info
 
@@ -124,13 +124,13 @@ def fileinfo_str(f, verbose=False):
 verbose = True
 if __name__ == '__main__':
     mbdb = Mbdb("Manifest.mbdb")
-    print mbdb.mbdb
+    print(mbdb.mbdb)
     mbdx = mbdb.mbdx
-    for offset, fileinfo in mbdb.mbdb.items():
+    for offset, fileinfo in list(mbdb.mbdb.items()):
         if offset in mbdx:
             fileinfo['fileID'] = mbdx[offset]
         else:
             fileinfo['fileID'] = "<nofileID>"
-            print >> sys.stderr, "No fileID found for %s" % fileinfo_str(
-                fileinfo)
-        print fileinfo_str(fileinfo, verbose)
+            print("No fileID found for %s" % fileinfo_str(
+                fileinfo), file=sys.stderr)
+        print(fileinfo_str(fileinfo, verbose))

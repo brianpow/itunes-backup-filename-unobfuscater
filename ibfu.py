@@ -9,7 +9,7 @@ from mbdb import Mbdb
 def process_mbdb(filename):
     db = Mbdb(filename)
     mbdb = db.mbdb
-    for index, row in mbdb.items():
+    for index, row in list(mbdb.items()):
         if (row['mode'] & 0xE000) != 0x4000:
             if args.undo:
                 dst = os.sep.join([path, row['fileID']])
@@ -20,22 +20,22 @@ def process_mbdb(filename):
                 dst = os.sep.join(
                     [path, row['domain'], row['filename'].replace('/', os.sep)])
             if args.verbose:
-                print "Renaming %s to %s" % (src, dst)
+                print("Renaming %s to %s" % (src, dst))
             try:
                 if not args.dryrun:
                     os.renames(src, dst)
             except OSError:
-                print "Error occured when renaming %s to %s" % (src, dst)
+                print("Error occured when renaming %s to %s" % (src, dst))
         elif row['filename'] != '':
             if args.verbose:
-                print "Skipping root directory %s (%s)" % (row['domain'], row['fileID'])
+                print("Skipping root directory %s (%s)" % (row['domain'], row['fileID']))
         else:
             if args.verbose:
-                print "Skipping directory %s (%s)" % (os.sep.join([row['domain'], row['filename']]), row['fileID'])
+                print("Skipping directory %s (%s)" % (os.sep.join([row['domain'], row['filename']]), row['fileID']))
 
 
 def process_db(filename):
-    print "Processing %s..." % (filename)
+    print("Processing %s..." % (filename))
     conn = sqlite3.connect(filename)
 
     c = conn.cursor()
@@ -49,9 +49,9 @@ def process_db(filename):
                 dst = os.sep.join([path, row[1], row[2]])
             if args.verbose:
                 if args.tab:
-                    print "%s\t%s" % (src, dst)
+                    print("%s\t%s" % (src, dst))
                 else:
-                    print "Renaming %s to %s" % (src, dst)
+                    print("Renaming %s to %s" % (src, dst))
             
             try:
                 if not args.dryrun:
@@ -64,9 +64,9 @@ def process_db(filename):
                             pass
                         os.renames(src, dst)
                     except OSError:
-                        print "Error occured when finding source file: %s to %s" % (src, dst)
+                        print("Error occured when finding source file: %s to %s" % (src, dst))
             except OSError:
-                print "Error occured when renaming %s to %s" % (src, dst)
+                print("Error occured when renaming %s to %s" % (src, dst))
 
 
 parser = argparse.ArgumentParser(
@@ -97,5 +97,5 @@ for path in args.paths:
     elif os.path.isfile(db2):
         process_mbdb(db2)
     else:
-        print "Unable to locate database file at %s or %s" % (db, db2)
+        print("Unable to locate database file at %s or %s" % (db, db2))
         continue
