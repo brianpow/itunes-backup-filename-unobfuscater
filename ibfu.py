@@ -3,6 +3,7 @@
 import sqlite3
 import os
 import argparse
+import platform
 from mbdb import Mbdb
 
 
@@ -71,7 +72,7 @@ def process_db(filename):
 
 parser = argparse.ArgumentParser(
     description='iTunes Backup Filename Unobfuscater. Licence: AGPL-v3.0')
-parser.add_argument('paths', default='.', nargs='*',
+parser.add_argument('paths', default='', nargs='*',
                     help='Path of iTunes Backup [default: current working directory]')
 parser.add_argument('-d', '--dryrun', dest='dryrun',
                     action='store_true', help='Dry run, don\'t rename any files')
@@ -89,7 +90,46 @@ parser.add_argument(
 
 args = parser.parse_args()
 
-for path in args.paths:
+if len(args.paths):
+    for path in args.paths:
+        db = os.sep.join([path, 'Manifest.db'])
+        db2 = os.sep.join([path, 'Manifest.mbdb'])
+        if os.path.isfile(db):
+            process_db(db)
+        elif os.path.isfile(db2):
+            process_mbdb(db2)
+        else:
+            print("Unable to locate database file at %s or %s" % (db, db2))
+            continue
+else:
+    home = os.path.expanduser("~")
+    backup_path = []
+    if platform.system() == 'Darwin':
+        backup_path.append(os.sep.join(
+            [home, 'Library/Application Support/MobileSync/Backup']))
+    elif platform.system() == 'Windows':
+        backup_path.extend([
+            os.sep.join([home, 'Apple\MobileSync\Backup']),
+            os.sep.join([home, 'Apple\MobileSync\Backup']),
+            os.sep.join([home, 'AppData\Roaming\Apple\MobileSync\Backup']),
+            os.sep.join([home, 'AppData\Roaming\Apple\MobileSync\Backup'])
+        ])
+
+    path_found = ["."]
+    for wpath in backup_path:
+        if os.path.isdir(wpath):
+            path_found.append(os.listdir(wpath))
+        else:
+            print("Path not found: %s" % (wpath))
+
+    if len(path_found) > 1:
+        for i, val in enumerate(path_found):
+            print("%2d: %s" % (i, val))
+
+        index = input("Please select a path: ")
+        path = path_found[int(index)]
+    else:
+        path = path_found[0]
     db = os.sep.join([path, 'Manifest.db'])
     db2 = os.sep.join([path, 'Manifest.mbdb'])
     if os.path.isfile(db):
@@ -98,4 +138,3 @@ for path in args.paths:
         process_mbdb(db2)
     else:
         print("Unable to locate database file at %s or %s" % (db, db2))
-        continue
