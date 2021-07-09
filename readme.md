@@ -6,7 +6,7 @@ iOS does not allow direct access of files in specific app. The only way to do is
 
 ## Requirement
 
-* Python 2.7 or above
+* Python 3.9 or above
 * Tested on Windows, but should work in OSX
 * Backup via iTunes with NO password
 
