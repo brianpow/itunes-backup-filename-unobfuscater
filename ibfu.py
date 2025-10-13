@@ -109,10 +109,10 @@ else:
             [home, 'Library/Application Support/MobileSync/Backup']))
     elif platform.system() == 'Windows':
         backup_path.extend([
-            os.sep.join([home, 'Apple\MobileSync\Backup']),
-            os.sep.join([home, 'Apple\MobileSync\Backup']),
-            os.sep.join([home, 'AppData\Roaming\Apple\MobileSync\Backup']),
-            os.sep.join([home, 'AppData\Roaming\Apple\MobileSync\Backup'])
+            os.sep.join([home, r'Apple\MobileSync\Backup']),
+            os.sep.join([home, r'Apple Computer\MobileSync\Backup']),
+            os.sep.join([home, r'AppData\Roaming\Apple\MobileSync\Backup']),
+            os.sep.join([home, r'AppData\Roaming\Apple Computer\MobileSync\Backup'])
         ])
 
     path_found = ["."]
