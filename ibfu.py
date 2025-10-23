@@ -162,6 +162,7 @@ def main():
         
         file = validate_backup_path(path)
         process_backup(path, file, args)
+        os.startfile(path)
 
 logging.basicConfig(filename=f'{__name__}.log', level=logging.INFO, format = '%(asctime)s\t%(levelname)s\t%(message)s')
 console = logging.StreamHandler()
