@@ -101,7 +101,6 @@ def main():
     choices=['DEBUG', 'INFO', 'WARNING', 'ERROR', 'CRITICAL'],
     help='Set the logging level (default: %(default)s)'
     )
-    args = parser.parse_args()
     parser.add_argument(
         '-V',
         '--version',
