@@ -79,9 +79,9 @@ def process_db(path, filename, args):
                             pass
                         os.renames(src, dst)
                     except OSError:
-                        log.info("Error occured when finding source file: %s to %s" % (src, dst))
+                        log.error("Error occured when finding source file: %s to %s" % (src, dst))
             except OSError:
-                log.info("Error occured when renaming %s to %s" % (src, dst))
+                log.error("Error occured when renaming %s to %s" % (src, dst))
 
 def main():
     parser = argparse.ArgumentParser(
